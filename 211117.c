@@ -28,9 +28,17 @@ void RECV_DATA(int sock_flag);
 
 int main(int argc, char *argv[])
 {
+    if(argc < 2)
+    {
+        printf("less argv");
+
+        return 0;
+    }
+
     // Parse User Name
     char num[12];
     strcpy(num, argv[1]);
+    printf("User name: %s", num);
 
     int sock_flag;
     struct sockaddr_in server_addr;
