@@ -8,7 +8,7 @@
 #include <pthread.h> // thread
 
 #define MAX 256
-#define SERVER_PORT 8002
+#define SERVER_PORT 45000
 
 struct Data {
     char[12] user;
