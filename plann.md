@@ -15,6 +15,11 @@
 <br>
 
 ### 2. option select & 분기를 구현
+> 2021.11.26 구현 완료: 02_option
+<br>
+<br>
+
+### 3. pthread 구현
 <br>
 <br>
 
