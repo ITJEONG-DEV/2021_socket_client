@@ -1,55 +1,96 @@
-#include <stdio.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <stdio.h>
 #include <math.h>
+#include <pthread.h>
 
 #define MAX 255
+#define SERVER_PORT 45000
 
-int options = 1;
-
-/*
- * 1 :: sending message
- * 2 :: uploading file
- * 3 :: downloading file
- * 4 :: checking uploaded file list
- * 5 :: close connection
- */
+enum MSG_TYPE {
+        SEND_MESSAGE = 1,
+        UPLOAD_FILE,
+        DOWNLOAD_FILE,
+        CHECK_FILE_LIST,
+        CLOSE_CONNECTION
+};
 
 int get_options();
+
+void send_message(int sock_flag, char* user);
+void upload_file(int sock_flag, char* user);
+void download_file(int sock_flag, char* user);
+void check_file_list(int sock_flag, char* user);
+void close_connection(int sock_flag, char* user);
 
 void make_send_msg(char* buf, char* user, char* msg_type, char* data);
 void make_recv_msg(char* buf, char* msg);
 
 int main(int argc, char *argv[])
 {
-        char num[12]               = "s2018112552";
+        // get user info
+        if(argc < 2)
+        {
+                printf("less argv");
+                return 0;
+        }
+        char user[12];
+        strcpy(user, argv[1]);
+        printf("user name: %s\n", user);
+        // socket creation
+        int sock_flag;
+        struct sockaddr_in server_addr;
 
-        char sender_example[MAX]   = "s2018112552|0x10|5|0x00|Hello";
-        char received_example[MAX] = "s2018112552|0x11|5|0x00|Hello";
+        if((sock_flag = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP))<0)
+        {
+                printf("Socket Creation Failed\n");
+                exit(0);
+        }
+        else
+                printf("Socket Creation Success\n");
 
-        char* msg_type             = "0x10";
-        char* given_message        = "Hello";
+        // connection
+        server_addr.sin_family = AF_INET;
+        server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+        server_addr.sin_port = htons(SERVER_PORT);
 
-        // send
-        char send_buf[MAX];
+        if((connect(sock_flag, (struct sockaddr*)&server_addr, sizeof(server_addr)))<0)
+        {
+                printf("Server-Client Connection Failed\n");
+                exit(0);
+        }
+        else
+                printf("Server-Client Connection Success\n");
 
-        make_send_msg(send_buf, num, msg_type, given_message);
+        // main thread
+        while(1)
+        {
+                int selection = get_options();
 
-        printf("<<send>>\n");
-        printf("example: %s\n", sender_example);
-        printf("results: %s\n", send_buf);
-
-        // receive
-        char receiver_buf[MAX];
-
-        printf("<<receive>>\n");
-        printf("examples: %s\n", received_example);
-
-        make_recv_msg(receiver_buf, received_example);
-
-        printf("results: %s\n", receiver_buf);
-
-        int selection = get_options();
-        printf("select %d\n", selection);
+                switch(selection)
+                {
+                        case SEND_MESSAGE:
+                                send_message(sock_flag, user);
+                                break;
+                        case UPLOAD_FILE:
+                                upload_file(sock_flag, user);
+                                break;
+                        case DOWNLOAD_FILE:
+                                download_file(sock_flag, user);
+                                break;
+                        case CHECK_FILE_LIST:
+                                check_file_list(sock_flag, user);
+                                break;
+                        case CLOSE_CONNECTION:
+                                close_connection(sock_flag, user);
+                                break;
+                }
+                break;
+        }
 
         return 0;
 }
@@ -58,11 +99,35 @@ int get_options()
 {
         int option;
 
-        printf("1. sending message\n2. uploadnig file\n3. downloading file\n4. checking uploaded file list\n5. close connection\nselect> ");
-        scanf("%d", &option);
+        do
+        {
+                printf("\n1. sending message\n2. uploadnig file\n3. downloading file\n4. checking uploaded file list\n5. close connection\nselect> ");
+                scanf("%d", &option);
+        }while(1>option||option>5);
 
         return option;
 }
+
+void send_message(int sock_flag, char* user)
+{
+        const char* msg_type = "0x10";
+        char buf[MAX];
+        memset(buf, 0x00, MAX);
+        printf("Enter the message: ");
+        scanf(" %s", &buf);
+        fgets(buf, MAX, stdin);
+
+        char message[MAX];
+        memset(message, 0x00, MAX);
+        make_send_msg(message, user, msg_type, buf);
+
+        write(sock_flag, message, sizeof(message));
+}
+
+void upload_file(int sock_flag, char* user){}
+void download_file(int sock_flag, char* user){}
+void check_file_list(int sock_flag, char* user){}
+void close_connection(int sock_flag, char* user){}
 
 void make_send_msg(char* buf, char* user, char* msg_type, char* data)
 {
@@ -93,7 +158,7 @@ void make_recv_msg(char* buf, char* msg)
 
         ptr = strtok(NULL, "|");
         printf("data_len: %s\n", ptr);
-        
+
         ptr = strtok(NULL, "|");
         printf("msg_end: %s\n", ptr);
 
