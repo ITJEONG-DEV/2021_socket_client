@@ -20,6 +20,7 @@
 <br>
 
 ### 3. pthread 구현
+> 2021.11.29 구현 완료: 03_pthread
 <br>
 <br>
 
@@ -29,10 +30,12 @@
 
 ### 4. msg_type 별 분기가 작동하도록 구현한다
 #### A. send message
+> 2021.11.26 구현 완료: 02_option
     0x10: send message
 <br>
   
 #### B. recv message
+> 2021.11.29 구현 완료: 03_pthread
     0x11: recv message
 <br>
   
