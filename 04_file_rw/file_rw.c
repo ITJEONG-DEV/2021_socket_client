@@ -10,7 +10,6 @@ void close_write(int fd);
 void read_file(int fd, int fd_w);
 int write_file(int fd, char* buf);
 
-int real_max = 230;
 
 int main(void)
 {

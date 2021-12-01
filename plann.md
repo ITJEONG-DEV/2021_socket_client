@@ -24,12 +24,17 @@
 <br>
 <br>
 
-### 3. file read/write test
+### 4. file read/write test
 > 2021.11.30 구현 완료: 04_file
 <br>
 <br>
 
-### 4. msg_type 별 분기가 작동하도록 구현한다
+### 5. 출력 매니저 구현
+> 2021.12.01 구현 완료: 05_print_manager
+<br>
+<br>
+
+### 6. msg_type 별 분기가 작동하도록 구현한다
 #### A. send message
 > 2021.11.26 구현 완료: 02_option
     0x10: send message
@@ -65,4 +70,4 @@
 <br>
 <br>
 
-### 5. 각 msg_type 별 테스트를 진행한다
+### 7. 각 msg_type 별 테스트를 진행한다

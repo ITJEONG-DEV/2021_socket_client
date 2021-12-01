@@ -175,7 +175,7 @@ void download_file(int sock_flag, char* user){}
 void check_file_list(int sock_flag, char* user){}
 void close_connection(int sock_flag, char* user)
 {
-    quit =
+    quit = 1;
 }
 
 void make_send_msg(char* buf, char* user, char* msg_type, char* data)
